@@ -38,98 +38,98 @@
 </template>
 
 <script>
-  export default {
-    name: "TagIndex",
-    data: function () {
-      return {
-        TagList: [],
-        dialogFormVisible: false,
-        form: {
-          TagName: '',
-          TagNo: '',
-          delivery: false,
-          type: [],
-          resource: '',
-          desc: ''
-        },
-        formLabelWidth: '80px'
-      }
+export default {
+  name: "TagIndex",
+  data: function() {
+    return {
+      TagList: [],
+      dialogFormVisible: false,
+      form: {
+        TagName: "",
+        TagNo: "",
+        delivery: false,
+        type: [],
+        resource: "",
+        desc: ""
+      },
+      formLabelWidth: "80px"
+    };
+  },
+  methods: {
+    /*监听新增弹框*/
+    OnOpenDialog: function() {
+      this.form.TagName = "";
+      this.form.TagNo = "";
+      this.dialogFormVisible = true;
     },
-    methods: {
-      /*监听新增弹框*/
-      OnOpenDialog:function(){
-        this.form.TagName = '';
-        this.form.TagNo = '';
-        this.dialogFormVisible = true;
-      },
-      /*监听弹框提交*/
-      OnDialogSubmit:function(){
-        var That = this;
-        if(this.form.TagName && this.form.TagNo){
-          this.SQAjax({
-            Url:'/api/TagEdit/backend',
-            RequestData:{
-              TagName: this.form.TagName,
-              TagNo: this.form.TagNo,
-              TagId:this.form.TagId ? this.form.TagId : ''
-            },
-            Success:function (data) {
-              if(That.form.TagId){
-                delete That.form.TagId;
-              }
-              That.GetData(That);
-            }
-          });
-
-          this.dialogFormVisible = false;
-        }
-      },
-      OnDialogCancel:function(){
-        if(this.form.TagId){
-          delete this.form.TagId;
-        }
-        this.dialogFormVisible = false;
-      },
-      /*渲染标签列表*/
-      GetData: function (That) {
-        That.SQAjax({
-          Url:'/api/TagRead/foreend',
-          Success:function (data) {
-            That.TagList = data;
-          }
-        });
-      },
-      /*删除标签*/
-      DeleteTag:function (Id) {
-        var That = this;
-
-        That.SQAjax({
-          Url:'/api/TagDelete/backend',
-          RequestData:{
-            _id:Id
+    /*监听弹框提交*/
+    OnDialogSubmit: function() {
+      var That = this;
+      if (this.form.TagName && this.form.TagNo) {
+        this.SQAjax({
+          Url: "/api/types/addTypes",
+          RequestData: {
+            TagName: this.form.TagName,
+            TagNo: this.form.TagNo,
+            TagId: this.form.TagId ? this.form.TagId : ""
           },
-          Success:function (data) {
+          Success: function(data) {
+            console.log(data);
+            if (That.form.TagId) {
+              delete That.form.TagId;
+            }
             That.GetData(That);
           }
         });
-      },
-      /*编辑标签*/
-      EditTag:function (Id,CurrentTagName,CurrentTagNo) {
-        this.form.TagName = CurrentTagName;
-        this.form.TagNo = CurrentTagNo;
-        this.form.TagId = Id;
-        this.dialogFormVisible = true;
+
+        this.dialogFormVisible = false;
       }
     },
-    mounted: function () {
-      this.GetData(this);
-      this.bus.$emit('Topbar',{
-        MenuHighLight:'2'
+    OnDialogCancel: function() {
+      if (this.form.TagId) {
+        delete this.form.TagId;
+      }
+      this.dialogFormVisible = false;
+    },
+    /*渲染标签列表*/
+    GetData: function(That) {
+      That.SQAjax({
+        Url: "/api/types/typeList",
+        Success: function(data) {
+          That.TagList = data.data;
+        }
       });
+    },
+    /*删除标签*/
+    DeleteTag: function(Id) {
+      var That = this;
+
+      That.SQAjax({
+        Url: "/api/types/deleteType",
+        RequestData: {
+          _id: Id
+        },
+        Success: function(data) {
+          That.GetData(That);
+        }
+      });
+    },
+    /*编辑标签*/
+    EditTag: function(Id, CurrentTagName, CurrentTagNo) {
+      this.form.TagName = CurrentTagName;
+      this.form.TagNo = CurrentTagNo;
+      this.form.TagId = Id;
+      this.dialogFormVisible = true;
     }
+  },
+  mounted: function() {
+    this.GetData(this);
+    this.bus.$emit("Topbar", {
+      MenuHighLight: "2"
+    });
   }
+};
 </script>
 
 <style scoped>
-
 </style>

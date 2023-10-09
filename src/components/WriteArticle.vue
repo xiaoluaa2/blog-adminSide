@@ -43,7 +43,7 @@
           <div class="ArticleTitle">
             文章封面：
             <input @change="SetArticleCover" type="file" multiple="multiple" ref='selectfile' style="flex:1">
-            <img :src="ArticleCover" v-show="ArticleCover" style="width: 70px;height: 40px"/>
+            <img :src="'/api/xiaolu/' + ArticleCover" v-show="ArticleCover" style="width: 70px;height: 40px"/>
           </div>
           <div class="ArticleTitle" style="justify-content: end;">
             <el-button type="primary" @click="SubmitArticle()">提交</el-button>
@@ -59,208 +59,211 @@
 </template>
 
 <script>
-  import Vue from 'vue'
-  import TopBar from './TopBar'
-  import axios from 'axios'
+import Vue from "vue";
+import TopBar from "./TopBar";
+import axios from "axios";
 
-  import mavonEditor from 'mavon-editor'
-  import 'mavon-editor/dist/css/index.css'
-  // use
-  Vue.use(mavonEditor)
+import mavonEditor from "mavon-editor";
+import "mavon-editor/dist/css/index.css";
+// use
+Vue.use(mavonEditor);
 
-  /*此页面为新增文章和修改文章共用，判断hash有参数则为修改页面，无参数则为新增文章*/
+/*此页面为新增文章和修改文章共用，判断hash有参数则为修改页面，无参数则为新增文章*/
 
-  export default {
-    name: "WriteArticle",
-    data: function () {
-      return {
-        Title:'',
-        order:'', // 优先级，试验田类的文章需要本字段来排序
-        Content:'',
-        CreateDate:new Date(),
-        Summary:'',
-        ArticleTagOptions: [],
-        ArticleTag: '',
-        ArticleCover:'',
-        CommentNum:0,
-        editorHeight: 0
-      }
-    },
-    methods:{
-      // 监听提交按钮
-      SubmitArticle:function () {
-        var That = this;
-
-        // 修改文章
-        if(this.$route.params.ID){
-          if(this.Title && this.Content){
-            this.SQAjax({
-              Url:'/api/ArticleUpdate/backend',
-              RequestData:{
-                _id:this.$route.params.ID,
-                Title: this.Title,
-                order:this.order,
-                Summary:this.Summary,
-                Content: this.Content,
-                CreateDate:this.CreateDate,
-                ArticleTag:this.ArticleTag,
-                ArticleCover:this.ArticleCover,
-                CommentNum:this.CommentNum,
-              },
-              Success:function (data) {
-                That.$router.push({name:'Article'});
-              }
-            });
-          }else {
-            That.$message.error('标题和内容不能为空');
-          }
-        //新增文章
-        }else {
-          if(this.Title && this.Content){
-            this.SQAjax({
-              Url:'/api/AddArticle/backend',
-              RequestData:{
-                Title: this.Title,
-                order: this.order,
-                Summary:this.Summary,
-                Content: this.Content,
-                CreateDate:this.CreateDate,
-                ArticleTag:this.ArticleTag,
-                ArticleCover:this.ArticleCover
-              },
-              Success:function (data) {
-                That.$router.push({name:'Article'});
-              }
-            });
-          }else {
-            That.$message.error('标题和内容不能为空');
-          }
-        }
-      },
-      //上传文章缩略图
-      SetArticleCover:function () {
-        var That = this;
-        var PicData = new FormData();
-        PicData.append('Content',this.$refs.selectfile.files[0]);
-        axios.post('/api/UploadImg', PicData
-        ).then(function (response) {
-          That.ArticleCover = response.data.data[0];//头图图片预览
-        }).catch(function (error) {
-        });
-      },
-      $imgAdd(pos, $file){
-        var formdata = new FormData(),That = this;
-        formdata.append('Content', $file);
-
-        axios.post('/api/UploadImg', formdata
-        ).then(function (UrlValue) {
-          That.$refs.md.$img2Url(pos, UrlValue.data.data[0]);
-        });
-      }
-    },
-    /*初始化富文本插件*/
-    mounted:function(){
-      this.bus.$emit('Topbar',{
-        MenuHighLight:'1'
-      });
-    },
-    /*初始化页面*/
-    created: function () {
+export default {
+  name: "WriteArticle",
+  data: function() {
+    return {
+      Title: "",
+      order: "", // 优先级，试验田类的文章需要本字段来排序
+      Content: "",
+      CreateDate: new Date(),
+      Summary: "",
+      ArticleTagOptions: [],
+      ArticleTag: "",
+      ArticleCover: "",
+      CommentNum: 0,
+      editorHeight: 0
+    };
+  },
+  methods: {
+    // 监听提交按钮
+    SubmitArticle: function() {
       var That = this;
-      //判断是否传参,是为修改文章、否为新增文章。初始化这个页面
+      // 修改文章
+      if (this.$route.params.id) {
+        if (this.Title && this.Content) {
+          this.SQAjax({
+            Url: "/api/blogs/articleUpdate",
+            RequestData: {
+              _id: this.$route.params.id,
+              Title: this.Title,
+              order: this.order,
+              Summary: this.Summary,
+              Content: this.Content,
+              CreateDate: this.CreateDate,
+              ArticleTag: this.ArticleTag,
+              ArticleCover: this.ArticleCover,
+              CommentNum: this.CommentNum
+            },
+            Success: function(data) {
+              console.log(data);
+              That.$router.push({ name: "Article" });
+            }
+          });
+        } else {
+          That.$message.error("标题和内容不能为空");
+        }
+        //新增文章
+      } else {
+        if (this.Title && this.Content) {
+          this.SQAjax({
+            Url: "/api/blogs/addBlogs",
+            RequestData: {
+              Title: this.Title,
+              order: this.order,
+              Summary: this.Summary,
+              Content: this.Content,
+              CreateDate: this.CreateDate,
+              ArticleTag: this.ArticleTag,
+              ArticleCover: this.ArticleCover,
+              CommentNum: this.CommentNum
+            },
+            Success: function(data) {
+              That.$router.push({ name: "Article" });
+            }
+          });
+        } else {
+          That.$message.error("标题和内容不能为空");
+        }
+      }
+    },
+    //上传文章缩略图
+    SetArticleCover: function() {
+      var That = this;
+      var PicData = new FormData();
+      PicData.append("file", this.$refs.selectfile.files[0]);
+      axios
+        .post("/api/upload/album", PicData)
+        .then(function(response) {
+          console.log(response.data.data);
+          That.ArticleCover = response.data.data; //头图图片预览
+        })
+        .catch(function(error) {});
+    },
+    $imgAdd(pos, $file) {
+      var formdata = new FormData(),
+        That = this;
+      formdata.append("Content", $file);
 
+      axios.post("/api/UploadImg", formdata).then(function(UrlValue) {
+        That.$refs.md.$img2Url(pos, UrlValue.data.data[0]);
+      });
+    }
+  },
+  /*初始化富文本插件*/
+  mounted: function() {
+    this.bus.$emit("Topbar", {
+      MenuHighLight: "1"
+    });
+  },
+  /*初始化页面*/
+  created: function() {
+    var That = this;
+    //判断是否传参,是为修改文章、否为新增文章。初始化这个页面
+
+    That.SQAjax({
+      Url: "/api/types/typeList",
+      RequestData: {},
+      Success: function(data) {
+        That.ArticleTagOptions = data.data;
+      }
+    });
+
+    if (this.$route.params.id) {
       That.SQAjax({
-        Url:'/api/TagRead/foreend',
-        RequestData:{},
-        Success:function (data) {
-          That.ArticleTagOptions = data;
+        Url: "/api/blogs/detail",
+        RequestData: { id: this.$route.params.id },
+        Success: function(data) {
+          console.log(data);
+          That.Title = data.data.Title;
+          That.order = data.data.order;
+          That.Content = data.data.Content;
+          That.Summary = data.data.Summary;
+          That.CreateDate = data.data.CreateDate;
+          That.ArticleTag = data.data.ArticleTag;
+          That.ArticleCover = data.data.ArticleCover;
+          That.CommentNum = data.data.CommentNum;
         }
       });
-
-      if(this.$route.params.ID){
-        That.SQAjax({
-          Url:'/api/ArticleReadOne/foreend',
-          RequestData:{_id:this.$route.params.ID},
-          Success:function (data) {
-            That.Title = data[0].Title;
-            That.order = data[0].order;
-            That.Content = data[0].Content;
-            That.Summary = data[0].Summary;
-            That.CreateDate = data[0].CreateDate;
-            That.ArticleTag = data[0].ArticleTag;
-            That.ArticleCover = data[0].ArticleCover;
-            That.CommentNum = data[0].CommentNum;
-          }
-        });
-      }else{
-
-      }
-
-      // 根据分辨率，动态设置编辑器高度
-      // That.editorHeight = window.screen.height - 318 + 'px';
-      That.editorHeight = window.innerHeight - 261 + 'px';
-    },
-    components:{
-      TopBar:TopBar
+    } else {
     }
+
+    // 根据分辨率，动态设置编辑器高度
+    // That.editorHeight = window.screen.height - 318 + 'px';
+    That.editorHeight = window.innerHeight - 261 + "px";
+  },
+  components: {
+    TopBar: TopBar
   }
+};
 </script>
 
 <style scoped>
-  .SimpleFlex{
-    margin-top: 10px;
-    display: flex;
-    vertical-align: middle;
-    justify-content: space-around;
-  }
+.SimpleFlex {
+  margin-top: 10px;
+  display: flex;
+  vertical-align: middle;
+  justify-content: space-around;
+}
 
-  .WriteArticleContent{
-  }
-  .ArticleTitle {
-    width: 30%;
-    margin-right: 10px;
-    display: flex;
-    align-items: center;
-  }
+.WriteArticleContent {
+}
+.ArticleTitle {
+  width: 30%;
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+}
 
-  .CommentNum{
-    width: 150px;
-    flex: none;
-  }
-  .CommentNum input{
-    width: 100%;
-  }
+.CommentNum {
+  width: 150px;
+  flex: none;
+}
+.CommentNum input {
+  width: 100%;
+}
 
-  .ArticleTitle input {
-    flex: 1;
-    height: 34px;
-    line-height: 34px;
-    border: 1px solid #dcdfe6;
-    outline: none;
-  }
+.ArticleTitle input {
+  flex: 1;
+  height: 34px;
+  line-height: 34px;
+  border: 1px solid #dcdfe6;
+  outline: none;
+}
 
-  .ArticleTitle input::placeholder{
-    color: #dcdfe6;
-  }
+.ArticleTitle input::placeholder {
+  color: #dcdfe6;
+}
 
-  .ArticleDetail {
-    margin-top: 20px;
-    margin-right: 20px;
-  }
+.ArticleDetail {
+  margin-top: 20px;
+  margin-right: 20px;
+}
 
-  .ArticleDetail textarea {
-    width: 100%;
-    height: 15rem;
-  }
-  .WriteSubmit{
-    text-align: right;
-    margin-left: 10px;
-  }
-  .editortoolbar{
-    border: 1px solid #ccc;
-  }
-  .editorbody{
-    border: 1px solid #ccc;
-    height: 500px;
-  }
+.ArticleDetail textarea {
+  width: 100%;
+  height: 15rem;
+}
+.WriteSubmit {
+  text-align: right;
+  margin-left: 10px;
+}
+.editortoolbar {
+  border: 1px solid #ccc;
+}
+.editorbody {
+  border: 1px solid #ccc;
+  height: 500px;
+}
 </style>

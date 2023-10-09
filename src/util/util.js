@@ -5,44 +5,62 @@ let CommonFunction = {}
 CommonFunction.install = function (Vue) {
   /*将UTC格式时间转为2018-09-09 下午 08：00*/
   Vue.prototype.DateFormat = function (UTCDate) {
-    return (new Date(UTCDate)).toLocaleString();
+    return (new Date(UTCDate)).toLocaleString()
   }
 
   Vue.prototype.SQAjax = function (Para) {
-    var that = this;
+    var that = this
     /*let AjaxLoading = Loading.service({ fullscreen: false });*/
 
-    var Token = localStorage.getItem('SQBlog') ? JSON.parse(localStorage.getItem('SQBlog')).Token : '';
-
+    var Token = localStorage.getItem('SQBlog') ? JSON.parse(localStorage.getItem('SQBlog')).token : ''
     if (!Token) {
-      this.$router.push({ name: 'LoginPage' });
-      return false;
+      this.$router.push({ name: 'LoginPage' })
+      return false
     }
+    console.log(Para)
+    var PostData = Object.assign({}, Para['RequestData'])
+    console.log(PostData)
 
-    var PostData = Object.assign({}, Para['RequestData'], { Token: Token });
+    const request = axios.create()
+    request.interceptors.request.use(
+      // 统一设置用户身份 token
+      (config) => {
+        if (Token) {
+          config.headers.Authorization = `Bearer ${Token}`
 
-    axios.post(Para['Url'], PostData).then(function (response) {
+
+        }
+
+
+        return config
+      },
+      (error) => {
+        return Promise.reject(error)
+      }
+    )
+
+    request.post(Para['Url'], PostData).then(function (response) {
       // AjaxLoading.close();
-
+      console.log(response.data)
       if (response.data.status == '0') {
-        Para['Success'](response.data.data);
+        Para['Success'](response.data)
       } else if (response.data.status == '1') {
         that.$message({
           message: response.data.data.message,
           type: 'success'
-        });
+        })
         that.$router.push({
           name: 'LoginPage',
-        });
+        })
       } else {
         that.$message({
           message: response.data.data.message,
           type: 'error',
           duration: 900
-        });
+        })
       }
     }).catch(function (error) {
-    });
+    })
   }
 
   /**
@@ -56,56 +74,56 @@ CommonFunction.install = function (Vue) {
    */
   Vue.prototype.SQFrontAjax = function (Para) {
     // 如果设置了noLoading参数（有这个字段），则不再加载loading
-    if (!Para.noLoading) Store.commit('ChangeLoading', true);
+    if (!Para.noLoading) Store.commit('ChangeLoading', true)
 
     if (!Para['UploadData']) {
-      Para['UploadData'] = {};
+      Para['UploadData'] = {}
     }
 
     axios.post(Para['Url'], Para['UploadData'], { timeout: 10000 }).then(function (response) {
-      if (!Para.noLoading) Store.commit('ChangeLoading', false);
+      if (!Para.noLoading) Store.commit('ChangeLoading', false)
 
       if (response.data.status == '0') {
-        Para['Success'](response.data.data);
+        Para['Success'](response.data.data)
       } else {
         Store.commit('ChangeTip', {
           Show: true,
           Title: response.data.data
-        });
+        })
       }
     }).catch(function (error) {
-      if (!Para.noLoading) Store.commit('ChangeLoading', false);
+      if (!Para.noLoading) Store.commit('ChangeLoading', false)
 
       if (error.response) { // 请求超时时，前端会终止http请求。故请求是没有响应值的，error.response为空
         if (error.response.status == '500') {
           Store.commit('ChangeTip', {
             Show: true,
             Title: '网络异常，请检查网络'
-          });
+          })
         } else if (error.response.status == '404') { // 404时也是有response的
           Store.commit('ChangeTip', {
             Show: true,
             Title: '您访问的接口不存在...'
-          });
+          })
         } else { // 500和404之外的状态码直接弹框展示statusText
           Store.commit('ChangeTip', {
             Show: true,
             Title: error.response.statusText
-          });
+          })
         }
       } else if (error.request && error.request.readyState == 4 && error.request.status == 0) {
         Store.commit('ChangeTip', {
           Show: true,
           Title: '接口访问超时'
-        });
+        })
       } else {
         Store.commit('ChangeTip', {
           Show: true,
           Title: error.message
-        });
+        })
       }
-    });
-  };
+    })
+  }
 
   /**
    * 获取当前时间
@@ -119,14 +137,14 @@ CommonFunction.install = function (Vue) {
       hour = dateObject.getHours(),
       min = dateObject.getMinutes(),
       second = dateObject.getSeconds(),
-      result = '';
+      result = ''
 
-    if (min < 10) min = '0' + min;
-    if (second < 10) second = '0' + second;
+    if (min < 10) min = '0' + min
+    if (second < 10) second = '0' + second
 
-    result = '' + year + '/' + month + '/' + day + ' ' + hour + ':' + min + ':' + second;
-    return result;
-  };
+    result = '' + year + '/' + month + '/' + day + ' ' + hour + ':' + min + ':' + second
+    return result
+  }
 
   /**
    * 获取cookie
@@ -134,15 +152,15 @@ CommonFunction.install = function (Vue) {
    */
   Vue.prototype.getSQCookie = function (cookName) {
     let name = cookName + '=',
-      cookies = document.cookie.split(';');
+      cookies = document.cookie.split(';')
     for (let i = 0; i < cookies.length; i++) {
-      let cleanItem = cookies[i].trim();
+      let cleanItem = cookies[i].trim()
       if (cleanItem.indexOf(name) == 0) {
-        return cleanItem.substring(name.length, cookies[i].length);
+        return cleanItem.substring(name.length, cookies[i].length)
       }
     }
-    return '';
-  };
+    return ''
+  }
 
   /**
    * 根据IP获取用户所在城市 ip非必传
@@ -151,11 +169,11 @@ CommonFunction.install = function (Vue) {
    */
   Vue.prototype.GetLocation = function (func) {
     let that = this,
-      locationCookie = this.getSQCookie('sunqBlogLocation');
+      locationCookie = this.getSQCookie('sunqBlogLocation')
 
     // 如果用户多次访问，一周内不会重复请求定位接口
     if (locationCookie) {
-      func(locationCookie);
+      func(locationCookie)
     } else {
       axios({
         url: 'https://restapi.amap.com/v3/ip',
@@ -164,11 +182,11 @@ CommonFunction.install = function (Vue) {
           key: 'ba5f9b69f0541123a4dbe142da230b4d'
         },
       }).then(function (resp) {
-        func(resp.data.city);
-        that.setSQCookie('sunqBlogLocation', '', 24 * 7); // 相隔一周同一浏览器再次访问时会重新定位
-      }).catch();
+        func(resp.data.city)
+        that.setSQCookie('sunqBlogLocation', '', 24 * 7) // 相隔一周同一浏览器再次访问时会重新定位
+      }).catch()
     }
-  };
+  }
 
   /**
    * 获取当前时间
@@ -182,17 +200,17 @@ CommonFunction.install = function (Vue) {
       hour = dateObject.getHours(),
       min = dateObject.getMinutes(),
       second = dateObject.getSeconds(),
-      result = '';
+      result = ''
 
-    if (month < 10) month = '0' + month;
-    if (day < 10) day = '0' + day;
-    if (hour < 10) hour = '0' + hour;
-    if (min < 10) min = '0' + min;
-    if (second < 10) second = '0' + second;
+    if (month < 10) month = '0' + month
+    if (day < 10) day = '0' + day
+    if (hour < 10) hour = '0' + hour
+    if (min < 10) min = '0' + min
+    if (second < 10) second = '0' + second
 
-    result = '' + year + '/' + month + '/' + day + ' ' + hour + ':' + min + ':' + second;
-    return result;
-  };
+    result = '' + year + '/' + month + '/' + day + ' ' + hour + ':' + min + ':' + second
+    return result
+  }
 
   /**
    * 种cookie
@@ -201,64 +219,63 @@ CommonFunction.install = function (Vue) {
    * @param exHour 过期时间,单位小时
    */
   Vue.prototype.setSQCookie = function (name, value, exHour) {
-    var d = new Date();
-    d.setTime(d.getTime() + exHour * 60 * 60 * 1000);
-    var expires = 'expires=' + d.toGMTString(); // cookie的语法要求是这个标志，和这个时间格式
-    document.cookie = name + '=' + value + '; ' + expires;
-    console.log('种下cookie', name + '=' + value + '; ' + expires);
-  };
+    var d = new Date()
+    d.setTime(d.getTime() + exHour * 60 * 60 * 1000)
+    var expires = 'expires=' + d.toGMTString() // cookie的语法要求是这个标志，和这个时间格式
+    document.cookie = name + '=' + value + '; ' + expires
+    console.log('种下cookie', name + '=' + value + '; ' + expires)
+  }
 
   Vue.prototype.getSQBrowser = function () {
-    var userAgent = navigator.userAgent; //取得浏览器的userAgent字符串
-    var isOpera = userAgent.indexOf('Opera') > -1; //判断是否Opera浏览器
+    var userAgent = navigator.userAgent //取得浏览器的userAgent字符串
+    var isOpera = userAgent.indexOf('Opera') > -1 //判断是否Opera浏览器
     var isIE = userAgent.indexOf('compatible') > -1
-      && userAgent.indexOf('MSIE') > -1 && !isOpera; //判断是否IE浏览器
-    var isEdge = userAgent.indexOf('Edge') > -1; //判断是否IE的Edge浏览器
-    var isFF = userAgent.indexOf('Firefox') > -1; //判断是否Firefox浏览器
+      && userAgent.indexOf('MSIE') > -1 && !isOpera //判断是否IE浏览器
+    var isEdge = userAgent.indexOf('Edge') > -1 //判断是否IE的Edge浏览器
+    var isFF = userAgent.indexOf('Firefox') > -1 //判断是否Firefox浏览器
     var isSafari = userAgent.indexOf('Safari') > -1
-      && userAgent.indexOf('Chrome') == -1; //判断是否Safari浏览器
+      && userAgent.indexOf('Chrome') == -1 //判断是否Safari浏览器
     var isChrome = userAgent.indexOf('Chrome') > -1
-      && userAgent.indexOf('Safari') > -1; //判断Chrome浏览器
+      && userAgent.indexOf('Safari') > -1 //判断Chrome浏览器
 
     if (isIE) {
-      var reIE = new RegExp('MSIE (\\d+\\.\\d+);');
-      reIE.test(userAgent);
-      var fIEVersion = parseFloat(RegExp['$1']);
+      var reIE = new RegExp('MSIE (\\d+\\.\\d+);')
+      reIE.test(userAgent)
+      var fIEVersion = parseFloat(RegExp['$1'])
       if (fIEVersion == 7) {
-        return 'IE7';
+        return 'IE7'
       } else if (fIEVersion == 8) {
-        return 'IE8';
+        return 'IE8'
       } else if (fIEVersion == 9) {
-        return 'IE9';
+        return 'IE9'
       } else if (fIEVersion == 10) {
-        return 'IE10';
+        return 'IE10'
       } else if (fIEVersion == 11) {
-        return 'IE11';
+        return 'IE11'
       } else {
-        return '0';
+        return '0'
       }//IE版本过低
-      return 'IE';
     }
     if (isOpera) {
-      return 'Opera';
+      return 'Opera'
     }
     if (isEdge) {
-      return 'Edge';
+      return 'Edge'
     }
     if (isFF) {
-      return 'FireFox';
+      return 'FireFox'
     }
     if (isSafari) {
-      return 'Safari';
+      return 'Safari'
     }
     if (isChrome) {
-      return 'Chrome';
+      return 'Chrome'
     }
-  };
+  }
 
   Vue.prototype.createLog = function (log) {
     let that = this,
-      dateString = this.getSQTime();
+      dateString = this.getSQTime()
 
     that.SQAjax({
       Url: '/api/visitCreate/foreend',
@@ -272,12 +289,12 @@ CommonFunction.install = function (Vue) {
         operateContent: log.operateContent ? log.operateContent : '',
       },
       Success: function (data) {
-        console.log('jj');
+        console.log('jj')
       }
-    });
+    })
 
-    console.log('進入記錄日志方法');
-  };
+    console.log('進入記錄日志方法')
+  }
 }
 
 export default CommonFunction

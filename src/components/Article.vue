@@ -11,7 +11,11 @@
         <el-table-column prop="ArticleTag" label="分类标签"></el-table-column>
         <el-table-column prop="order" label="优先级"></el-table-column>
         <el-table-column prop="CommentNum" label="评论数"></el-table-column>
-        <el-table-column prop="CreateDate" label="创建时间"></el-table-column>
+        <el-table-column  label="创建时间">
+          <template slot-scope="scope">
+            {{new Date(scope.row.CreateDate).toLocaleString()  }}
+          </template>
+        </el-table-column>
         <el-table-column fixed="right" label="操作" width="130">
           <template slot-scope="scope">
             <el-button @click="ReadArticle(scope.row._id)" type="text" size="small" class="success-color">查看</el-button>
@@ -34,107 +38,108 @@
 </template>
 
 <script>
-    export default {
-      name: "Article",
-      data:function(){
-        return {
-          ArticleList:[],
-
-          ArticleTotal:0,
-          PagiSize:10,
-          MyCurPage: 1
+export default {
+  name: "Article",
+  data: function() {
+    return {
+      ArticleList: [],
+      ArticleTotal: 0,
+      PagiSize: 10,
+      MyCurPage: 1
+    };
+  },
+  methods: {
+    ReadArticle: function(Id) {
+      console.log(Id);
+      this.$router.push({ name: "ArticleDetail", params: { id: Id } });
+    },
+    WriteArticle: function() {
+      this.$router.push({ name: "WriteArticle" });
+    },
+    EditArticle: function(Id) {
+      this.$router.push({ name: "WriteArticle", params: { id: Id } });
+    },
+    DeleteArticle: function(Id) {
+      var That = this;
+      this.SQAjax({
+        Url: "/api/blogs/deleteBlog",
+        RequestData: { _id: Id },
+        Success: function(data) {
+          console.log(data);
+          That.$message({
+            message: "删除成功",
+            type: "success",
+            duration: 900
+          });
+          That.GetData();
+          // That.SkipTo(That.MyCurPage);
         }
-      },
-      methods:{
-        ReadArticle:function (Id) {
-          this.$router.push({name:'ArticleDetail',params:{ID:Id}});
-        },
-        WriteArticle:function () {
-          this.$router.push({name:'WriteArticle'});
-        },
-        EditArticle:function (Id) {
-          this.$router.push({name:'WriteArticle',params:{ID:Id}});
-        },
-        DeleteArticle:function (Id) {
-          var That = this;
+      });
+    },
+    GetData: function(that) {
+      var That = this;
+      this.SQAjax({
+        Url: "/api/blogs/getBlogsList",
+        // RequestData: {
+        //   PagnationData: {
+        //     Skip: 0,
+        //     Limit: 11
+        //   }
+        // },
+        Success: function(data) {
+          console.log(data);
+          // if (data.length > 10) {
+          //   data.pop();
 
-          this.SQAjax({
-            Url:'/api/ArticleDelete/backend',
-            RequestData:{_id:Id},
-            Success:function (data) {
-              That.$message({
-                message: '删除成功',
-                type: 'success',
-                duration: 900
-              });
-              That.SkipTo(That.MyCurPage);
-            }
+          //   That.SQAjax({
+          //     Url: "/api/getarticlenum/foreend",
+          //     Success: function(data) {
+          //       That.ArticleTotal = data;
+          //     }
+          //   });
+          // }
+          That.ArticleList = data.data;
+          data.forEach(function(Item, I) {
+            Item.CreateDate = Item.CreateDate.slice(0, 10);
           });
-        },
-        GetData:function (that) {
-          var That = this;
-          this.SQAjax({
-            Url:'/api/ArticleRead/foreend',
-            RequestData: {
-              PagnationData: {
-                Skip:0,
-                Limit:11
-              }
-            },
-            Success:function (data) {
-              if (data.length > 10) {
-                data.pop();
-
-                That.SQAjax({
-                  Url: '/api/getarticlenum/foreend',
-                  Success: function (data) {
-                    That.ArticleTotal = data;
-                  }
-                });
-              }
-
-              data.forEach(function (Item,I) {
-                Item.CreateDate = Item.CreateDate.slice(0,10);
-              });
-              That.ArticleList = data;
-            }
-          });
-        },
-        // 翻页方法
-        ChangeCurPage:function(CurPage){
-          this.SkipTo(CurPage);
-          this.MyCurPage = CurPage;
-        },
-        NextPage:function (CurPage) {
-          this.SkipTo(CurPage);
-          this.MyCurPage = CurPage;
-        },
-        SkipTo:function (CurPage) {
-          var That = this;
-          That.SQAjax({
-            Url:'/api/ArticleRead/foreend',
-            RequestData: {
-              PagnationData: {
-                Skip:(CurPage-1) * 10,
-                Limit:10
-              }
-            },
-            Success:function (data) {
-              That.ArticleList = data;
-            }
-          });
+          That.ArticleList = data;
         }
-      },
-
-      mounted:function () {
-        this.GetData(this);
-        this.bus.$emit('Topbar',{
-          MenuHighLight:'1'
-        });
-      }
+      });
+    },
+    // 翻页方法
+    ChangeCurPage: function(CurPage) {
+      this.SkipTo(CurPage);
+      this.MyCurPage = CurPage;
+    },
+    NextPage: function(CurPage) {
+      this.SkipTo(CurPage);
+      this.MyCurPage = CurPage;
+    },
+    SkipTo: function(CurPage) {
+      var That = this;
+      That.SQAjax({
+        Url: "/api/ArticleRead/foreend",
+        RequestData: {
+          PagnationData: {
+            Skip: (CurPage - 1) * 10,
+            Limit: 10
+          }
+        },
+        Success: function(data) {
+          That.ArticleList = data;
+        }
+      });
     }
+  },
+
+  mounted: function() {
+    this.GetData(this);
+    this.bus.$emit("Topbar", {
+      MenuHighLight: "1"
+    });
+  }
+};
 </script>
 
 <style scoped>
-
 </style>

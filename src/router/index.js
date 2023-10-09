@@ -27,49 +27,49 @@ export default new Router({
       name: 'Article',
       component: Article
     }, {
-      path: '/ArticleDetail',
+      path: '/ArticleDetail/:id',
       name: 'ArticleDetail',
       component: ArticleDetail
     }, {
-      path:'/WriteArticle',
-      name:'WriteArticle',
-      component:WriteArticle
+      path: '/WriteArticle/:id',
+      name: 'WriteArticle',
+      component: WriteArticle
     }, {
-      path:'/TagIndex',
-      name:'TagIndex',
-      component:TagIndex
+      path: '/TagIndex',
+      name: 'TagIndex',
+      component: TagIndex
     }, {
-      path:'/TopBar',
-      name:'TopBar',
-      component:TopBar
+      path: '/TopBar',
+      name: 'TopBar',
+      component: TopBar
     }, {
-      path:'/LoginPage',
-      name:'LoginPage',
-      component:LoginPage
+      path: '/LoginPage',
+      name: 'LoginPage',
+      component: LoginPage
     }, {
-      path:'/TimeLine',
-      name:'TimeLine',
-      component:TimeLine
+      path: '/TimeLine',
+      name: 'TimeLine',
+      component: TimeLine
     }, {
-      path:'/Heartfelt',
-      name:'Heartfelt',
-      component:Heartfelt
+      path: '/Heartfelt',
+      name: 'Heartfelt',
+      component: Heartfelt
     }, {
-      path:'/FriendUrlIndex',
-      name:'FriendUrlIndex',
-      component:FriendUrlIndex
+      path: '/FriendUrlIndex',
+      name: 'FriendUrlIndex',
+      component: FriendUrlIndex
     }, {
-      path:'/MessageLeave',
-      name:'MessageLeave',
-      component:MessageLeave
-    },{
-      path:'/Comment',
-      name:'Comment',
-      component:Comment
-    },{
-      path:'/SnakeScores',
-      name:'SnakeScores',
-      component:SnakeScores
+      path: '/MessageLeave',
+      name: 'MessageLeave',
+      component: MessageLeave
+    }, {
+      path: '/Comment',
+      name: 'Comment',
+      component: Comment
+    }, {
+      path: '/SnakeScores',
+      name: 'SnakeScores',
+      component: SnakeScores
     }
   ]
 })

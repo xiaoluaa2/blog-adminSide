@@ -141,52 +141,54 @@
 <script>
 export default {
   name: "TopBar",
-  data: function () {
+  data: function() {
     return {
       // 个人中心显隐
       ShowExit: -1,
       // 菜单高亮参数
       MenuHighLight: "0",
       userName: "加载中",
-      menuStatus: window.screen.width>768 ? true : false // pc端时菜单初始化展示，移动端初始化时隐藏
+      menuStatus: window.screen.width > 768 ? true : false // pc端时菜单初始化展示，移动端初始化时隐藏
     };
   },
   // 这个参数是父子组件间传值
   props: ["TopbarShow"],
   methods: {
-    ChangeHighLight: function (Page) {
+    ChangeHighLight: function(Page) {
       this.OpenMenu();
       this.$router.push({
-        name: Page,
+        name: Page
       });
     },
-    OpenUserCenter: function () {
+    OpenUserCenter: function() {
       this.ShowExit = this.ShowExit * -1;
     },
-    Exit: function () {
+    Exit: function() {
       localStorage.clear();
       this.ShowExit = -1;
       this.$router.push({ name: "LoginPage" });
-      this.menuStatus = window.screen.width>768 ? this.menuStatus : !this.menuStatus;
+      this.menuStatus =
+        window.screen.width > 768 ? this.menuStatus : !this.menuStatus;
     },
     // 展示或隐藏菜单
-    OpenMenu: function(){
-      this.menuStatus = window.screen.width>768 ? this.menuStatus : !this.menuStatus;
+    OpenMenu: function() {
+      this.menuStatus =
+        window.screen.width > 768 ? this.menuStatus : !this.menuStatus;
     },
     // 打开新的页面
-    switchPage: function(page){
-      if(page == 'userClient'){
+    switchPage: function(page) {
+      if (page == "userClient") {
         window.open("http://39.104.22.73:67");
-      }else if(page == 'gitHub'){
+      } else if (page == "gitHub") {
         window.open("https://github.com/SunQQQ/SunQBlog-AdminSide");
       }
     }
   },
-  mounted: function () {
+  mounted: function() {
     var That = this;
 
     // 切换路由后，各组件会修改菜单高亮。这个参数是平级组件间传值
-    this.bus.$on("Topbar", function (data) {
+    this.bus.$on("Topbar", function(data) {
       That.MenuHighLight = data.MenuHighLight;
     });
 
@@ -196,21 +198,21 @@ export default {
     }
 
     // 注册修改用户名方法，登录成功时登录组件会通过这个方法修改用户名
-    this.bus.$on("changeUser", function (user) {
+    this.bus.$on("changeUser", function(user) {
       That.userName = user;
     });
 
     // 点击用户名以外区域关闭用户名弹窗
-    document.addEventListener("click", function (e) {
-      if (
-        !document
-          .getElementsByClassName("PersonCenterName")[0]
-          .contains(e.target)
-      ) {
-        That.ShowExit = -1;
-      }
-    });
-  },
+    // document.addEventListener("click", function (e) {
+    //   if (
+    //     !document
+    //       .getElementsByClassName("PersonCenterName")[0]
+    //       .contains(e.target)
+    //   ) {
+    //     That.ShowExit = -1;
+    //   }
+    // });
+  }
 };
 </script>
 
@@ -267,11 +269,11 @@ export default {
     display: flex;
   }
 
-  .MenuTopBarIcon{
+  .MenuTopBarIcon {
     display: none;
   }
 
-  .mobileExit{
+  .mobileExit {
     display: none;
   }
 }
@@ -317,7 +319,7 @@ export default {
     align-items: center;
   }
 
-  .mobileExit{
+  .mobileExit {
     display: block;
   }
 }
@@ -347,10 +349,10 @@ export default {
 }
 
 .MobileMenuSwitch {
-    box-sizing: border-box;
-    width: 24px;
-    height: 24px;
-    margin-left: auto;
+  box-sizing: border-box;
+  width: 24px;
+  height: 24px;
+  margin-left: auto;
 }
 
 .MobileMenuSwitch span {
