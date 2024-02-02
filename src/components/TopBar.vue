@@ -8,19 +8,19 @@
             <i class="iconfont icon-shouye"></i> 用户端入口
           </a>
         </div>
-        <div class="home-link">
+        <!-- <div class="home-link">
           <a
             href="https://github.com/SunQQQ/SunQBlog-AdminSide"
             target="_blank"
           >
             <i class="iconfont icon-github"></i> 管理端源码
           </a>
-        </div>
-        <div class="home-link">
+        </div> -->
+        <!-- <div class="home-link">
           <a href="http://39.104.22.73:70" target="_blank">
             <i class="iconfont icon-she"></i> 贪吃蛇入口
           </a>
-        </div>
+        </div> -->
         <div class="placeHolder"></div>
         <div class="PersonCenter">
           <div class="PersonCenterName" @click="OpenUserCenter()">
@@ -34,41 +34,26 @@
 
       <div class="MenuTopBarIcon" @click="OpenMenu()">
         <div class="MobileMenuSwitch">
-          <span
-            :class="
-              menuStatus
-                ? 'MenuButtonFirstGoOpen'
-                : 'MenuButtonFirstGoClose'
-            "
-          ></span>
-          <span
-            :class="
-              menuStatus
-                ? 'MenuButtonSecondGoOpen'
-                : 'MenuButtonSecondGoClose'
-            "
-          ></span>
-          <span
-            :class="
-              menuStatus
-                ? 'MenuButtonThirdGoOpen'
-                : 'MenuButtonThirdGoClose'
-            "
-          ></span>
+          <span :class="menuStatus
+            ? 'MenuButtonFirstGoOpen'
+            : 'MenuButtonFirstGoClose'
+            "></span>
+          <span :class="menuStatus
+            ? 'MenuButtonSecondGoOpen'
+            : 'MenuButtonSecondGoClose'
+            "></span>
+          <span :class="menuStatus
+            ? 'MenuButtonThirdGoOpen'
+            : 'MenuButtonThirdGoClose'
+            "></span>
         </div>
       </div>
     </div>
 
     <div style="height: 61px"></div>
 
-    <el-menu
-      :default-active="MenuHighLight"
-      class="LeftBar"
-      background-color="#545c64"
-      text-color="#fff"
-      active-text-color="#87c3ff"
-      v-if="menuStatus"
-    >
+    <el-menu :default-active="MenuHighLight" class="LeftBar" background-color="#545c64" text-color="#fff"
+      active-text-color="#87c3ff" v-if="menuStatus">
       <el-menu-item index="0" @click="ChangeHighLight('index')">
         <i class="iconfont icon-shujutongji"></i>
         <span slot="title">访问数据</span>
@@ -93,7 +78,7 @@
         <span slot="title">分类管理</span>
       </el-menu-item>
 
-      <el-menu-item index="3" @click="ChangeHighLight('TimeLine')">
+      <!-- <el-menu-item index="3" @click="ChangeHighLight('TimeLine')">
         <i class="iconfont icon-fuhao-shijianzhou"></i>
         <span slot="title">时间轴管理</span>
       </el-menu-item>
@@ -101,12 +86,12 @@
       <el-menu-item index="4" @click="ChangeHighLight('Heartfelt')">
         <i class="iconfont icon-heart"></i>
         <span slot="title">心声管理</span>
-      </el-menu-item>
+      </el-menu-item> -->
 
-      <!-- <el-menu-item index="5"  @click="ChangeHighLight('FriendUrlIndex')">
+      <el-menu-item index="5" @click="ChangeHighLight('FriendUrlIndex')">
         <i class="iconfont icon-lianjie"></i>
         <span slot="title">友链管理</span>
-      </el-menu-item> -->
+      </el-menu-item>
 
       <el-menu-item index="8" @click="ChangeHighLight('SnakeScores')">
         <i class="iconfont icon-she"></i>
@@ -114,17 +99,17 @@
       </el-menu-item>
 
       <div class="mobileExit">
-      <el-menu-item index="9" @click="switchPage('gitHub')">
-        <i class="iconfont icon-github"></i>
-        <span slot="title">源码入口</span>
-      </el-menu-item>
+        <el-menu-item index="9" @click="switchPage('gitHub')">
+          <i class="iconfont icon-github"></i>
+          <span slot="title">源码入口</span>
+        </el-menu-item>
       </div>
 
       <div class="mobileExit">
-      <el-menu-item index="10" @click="switchPage('userClient')">
-        <i class="iconfont icon-shouye"></i>
-        <span slot="title">用户端入口</span>
-      </el-menu-item>
+        <el-menu-item index="10" @click="switchPage('userClient')">
+          <i class="iconfont icon-shouye"></i>
+          <span slot="title">用户端入口</span>
+        </el-menu-item>
       </div>
 
       <div class="mobileExit">
@@ -133,7 +118,7 @@
           <span slot="title">切换账号</span>
         </el-menu-item>
       </div>
-      
+
     </el-menu>
   </div>
 </template>
@@ -141,7 +126,7 @@
 <script>
 export default {
   name: "TopBar",
-  data: function() {
+  data: function () {
     return {
       // 个人中心显隐
       ShowExit: -1,
@@ -154,16 +139,16 @@ export default {
   // 这个参数是父子组件间传值
   props: ["TopbarShow"],
   methods: {
-    ChangeHighLight: function(Page) {
+    ChangeHighLight: function (Page) {
       this.OpenMenu();
       this.$router.push({
         name: Page
       });
     },
-    OpenUserCenter: function() {
+    OpenUserCenter: function () {
       this.ShowExit = this.ShowExit * -1;
     },
-    Exit: function() {
+    Exit: function () {
       localStorage.clear();
       this.ShowExit = -1;
       this.$router.push({ name: "LoginPage" });
@@ -171,12 +156,12 @@ export default {
         window.screen.width > 768 ? this.menuStatus : !this.menuStatus;
     },
     // 展示或隐藏菜单
-    OpenMenu: function() {
+    OpenMenu: function () {
       this.menuStatus =
         window.screen.width > 768 ? this.menuStatus : !this.menuStatus;
     },
     // 打开新的页面
-    switchPage: function(page) {
+    switchPage: function (page) {
       if (page == "userClient") {
         window.open("http://39.104.22.73:67");
       } else if (page == "gitHub") {
@@ -184,11 +169,11 @@ export default {
       }
     }
   },
-  mounted: function() {
+  mounted: function () {
     var That = this;
 
     // 切换路由后，各组件会修改菜单高亮。这个参数是平级组件间传值
-    this.bus.$on("Topbar", function(data) {
+    this.bus.$on("Topbar", function (data) {
       That.MenuHighLight = data.MenuHighLight;
     });
 
@@ -198,7 +183,7 @@ export default {
     }
 
     // 注册修改用户名方法，登录成功时登录组件会通过这个方法修改用户名
-    this.bus.$on("changeUser", function(user) {
+    this.bus.$on("changeUser", function (user) {
       That.userName = user;
     });
 
@@ -218,6 +203,7 @@ export default {
 
 <style scoped lang="less">
 @import "../assets/css/base.less";
+
 .home-link {
   text-align: left;
   width: 100px;
@@ -237,13 +223,14 @@ export default {
 }
 
 // PC端
-@media only screen and (min-device-width: 768px) {
+@media screen and (min-width: 768px) {
   .LeftBar {
     width: 220px;
     position: fixed;
     bottom: 0;
     top: 61px;
   }
+
   .TopBar {
     .myflex("middle");
     height: 61px;
@@ -254,12 +241,14 @@ export default {
     width: 100%;
     z-index: 1000;
   }
+
   .Logo {
     background-color: rgb(84, 92, 100);
     width: 220px;
     color: white;
     text-align: center;
   }
+
   .TopBarRight {
     flex: 1;
     text-align: right;
@@ -279,7 +268,7 @@ export default {
 }
 
 // 移动端
-@media only screen and (max-device-width: 768px) {
+@media screen and (max-width: 768px) {
   .LeftBar {
     width: 100%;
     position: fixed;
@@ -287,6 +276,7 @@ export default {
     z-index: 10000;
     border-top: 1px solid @BorderColor;
   }
+
   .TopBar {
     .myflex("middle");
     height: 61px;
@@ -299,12 +289,14 @@ export default {
     background-color: @menu_color;
     border-bottom: 1px solid @BorderColor;
   }
+
   .Logo {
     // width: 220px;
     color: @fore_color;
     text-align: center;
     padding: 0 20px;
   }
+
   .TopBarRight {
     display: none;
   }
@@ -334,6 +326,7 @@ export default {
 .placeHolder {
   flex: 1;
 }
+
 .PersonCenterName {
   cursor: pointer;
 }
@@ -371,78 +364,99 @@ export default {
   animation: MenuButtonGoOpen 0.3s linear;
   animation-fill-mode: forwards;
 }
+
 .MenuButtonFirstGoClose {
   animation: MenuButtonGoClose 0.3s linear;
   animation-fill-mode: forwards;
 }
+
 @keyframes MenuButtonGoOpen {
   0% {
-    -ms-transform: rotate(-8deg); /* IE 9 */
+    -ms-transform: rotate(-8deg);
+    /* IE 9 */
     transform: rotate(-8deg);
     -moz-transform-origin: 100% 100%;
     -webkit-transform-origin: 100% 100%;
     -o-transform-origin: 100% 100%;
   }
+
   25% {
-    -ms-transform: rotate(-16deg); /* IE 9 */
+    -ms-transform: rotate(-16deg);
+    /* IE 9 */
     transform: rotate(-16deg);
     -moz-transform-origin: 100% 100%;
     -webkit-transform-origin: 100% 100%;
     -o-transform-origin: 100% 100%;
   }
+
   50% {
-    -ms-transform: rotate(-25deg); /* IE 9 */
+    -ms-transform: rotate(-25deg);
+    /* IE 9 */
     transform: rotate(-25deg);
     -moz-transform-origin: 100% 100%;
     -webkit-transform-origin: 100% 100%;
     -o-transform-origin: 100% 100%;
   }
+
   75% {
-    -ms-transform: rotate(-34deg); /* IE 9 */
+    -ms-transform: rotate(-34deg);
+    /* IE 9 */
     transform: rotate(-34deg);
     -moz-transform-origin: 100% 100%;
     -webkit-transform-origin: 100% 100%;
     -o-transform-origin: 100% 100%;
   }
+
   100% {
-    -ms-transform: rotate(-43deg); /* IE 9 */
+    -ms-transform: rotate(-43deg);
+    /* IE 9 */
     transform: rotate(-43deg);
     -moz-transform-origin: 100% 100%;
     -webkit-transform-origin: 100% 100%;
     -o-transform-origin: 100% 100%;
   }
 }
+
 @keyframes MenuButtonGoClose {
   0% {
-    -ms-transform: rotate(-43deg); /* IE 9 */
+    -ms-transform: rotate(-43deg);
+    /* IE 9 */
     transform: rotate(-43deg);
     -moz-transform-origin: 100% 100%;
     -webkit-transform-origin: 100% 100%;
     -o-transform-origin: 100% 100%;
   }
+
   25% {
-    -ms-transform: rotate(-34deg); /* IE 9 */
+    -ms-transform: rotate(-34deg);
+    /* IE 9 */
     transform: rotate(-34deg);
     -moz-transform-origin: 100% 100%;
     -webkit-transform-origin: 100% 100%;
     -o-transform-origin: 100% 100%;
   }
+
   50% {
-    -ms-transform: rotate(-25deg); /* IE 9 */
+    -ms-transform: rotate(-25deg);
+    /* IE 9 */
     transform: rotate(-25deg);
     -moz-transform-origin: 100% 100%;
     -webkit-transform-origin: 100% 100%;
     -o-transform-origin: 100% 100%;
   }
+
   75% {
-    -ms-transform: rotate(-16deg); /* IE 9 */
+    -ms-transform: rotate(-16deg);
+    /* IE 9 */
     transform: rotate(-16deg);
     -moz-transform-origin: 100% 100%;
     -webkit-transform-origin: 100% 100%;
     -o-transform-origin: 100% 100%;
   }
+
   100% {
-    -ms-transform: rotate(0deg); /* IE 9 */
+    -ms-transform: rotate(0deg);
+    /* IE 9 */
     transform: rotate(0deg);
     -moz-transform-origin: 100% 100%;
     -webkit-transform-origin: 100% 100%;
@@ -453,20 +467,24 @@ export default {
 .MenuButtonSecondGoOpen {
   opacity: 0;
 }
+
 .MenuButtonSecondGoClose {
   -webkit-animation: MenutionGoCloseSeFloor 0.5s linear;
   -o-animation: MenutionGoCloseSeFloor 0.5s linear;
   animation: MenutionGoCloseSeFloor 0.5s linear;
   animation-fill-mode: forwards;
 }
+
 @keyframes MenutionGoCloseSeFloor {
   0% {
     /*background: white;*/
     opacity: 0;
   }
+
   50% {
     opacity: 0;
   }
+
   100% {
     opacity: 1;
   }
@@ -477,78 +495,99 @@ export default {
   animation: MenuButtonGoOpenThFloor 0.3s linear;
   animation-fill-mode: forwards;
 }
+
 .MenuButtonThirdGoClose {
   animation: MenuButtonGoCloseThFloor 0.3s linear;
   animation-fill-mode: forwards;
 }
+
 @keyframes MenuButtonGoOpenThFloor {
   0% {
-    -ms-transform: rotate(8deg); /* IE 9 */
+    -ms-transform: rotate(8deg);
+    /* IE 9 */
     transform: rotate(8deg);
     -moz-transform-origin: 100% 100%;
     -webkit-transform-origin: 100% 100%;
     -o-transform-origin: 100% 100%;
   }
+
   25% {
-    -ms-transform: rotate(16deg); /* IE 9 */
+    -ms-transform: rotate(16deg);
+    /* IE 9 */
     transform: rotate(16deg);
     -moz-transform-origin: 100% 100%;
     -webkit-transform-origin: 100% 100%;
     -o-transform-origin: 100% 100%;
   }
+
   50% {
-    -ms-transform: rotate(25deg); /* IE 9 */
+    -ms-transform: rotate(25deg);
+    /* IE 9 */
     transform: rotate(25deg);
     -moz-transform-origin: 100% 100%;
     -webkit-transform-origin: 100% 100%;
     -o-transform-origin: 100% 100%;
   }
+
   75% {
-    -ms-transform: rotate(34deg); /* IE 9 */
+    -ms-transform: rotate(34deg);
+    /* IE 9 */
     transform: rotate(34deg);
     -moz-transform-origin: 100% 100%;
     -webkit-transform-origin: 100% 100%;
     -o-transform-origin: 100% 100%;
   }
+
   100% {
-    -ms-transform: rotate(43deg); /* IE 9 */
+    -ms-transform: rotate(43deg);
+    /* IE 9 */
     transform: rotate(43deg);
     -moz-transform-origin: top right;
     -webkit-transform-origin: top right;
     -o-transform-origin: top right;
   }
 }
+
 @keyframes MenuButtonGoCloseThFloor {
   0% {
-    -ms-transform: rotate(43deg); /* IE 9 */
+    -ms-transform: rotate(43deg);
+    /* IE 9 */
     transform: rotate(43deg);
     -moz-transform-origin: 100% 100%;
     -webkit-transform-origin: 100% 100%;
     -o-transform-origin: 100% 100%;
   }
+
   25% {
-    -ms-transform: rotate(34deg); /* IE 9 */
+    -ms-transform: rotate(34deg);
+    /* IE 9 */
     transform: rotate(34deg);
     -moz-transform-origin: 100% 100%;
     -webkit-transform-origin: 100% 100%;
     -o-transform-origin: 100% 100%;
   }
+
   50% {
-    -ms-transform: rotate(25deg); /* IE 9 */
+    -ms-transform: rotate(25deg);
+    /* IE 9 */
     transform: rotate(25deg);
     -moz-transform-origin: 100% 100%;
     -webkit-transform-origin: 100% 100%;
     -o-transform-origin: 100% 100%;
   }
+
   75% {
-    -ms-transform: rotate(16deg); /* IE 9 */
+    -ms-transform: rotate(16deg);
+    /* IE 9 */
     transform: rotate(16deg);
     -moz-transform-origin: 100% 100%;
     -webkit-transform-origin: 100% 100%;
     -o-transform-origin: 100% 100%;
   }
+
   100% {
-    -ms-transform: rotate(0deg); /* IE 9 */
+    -ms-transform: rotate(0deg);
+    /* IE 9 */
     transform: rotate(0deg);
     -moz-transform-origin: top right;
     -webkit-transform-origin: top right;

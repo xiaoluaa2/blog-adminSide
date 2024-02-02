@@ -13,9 +13,10 @@
           </div>
           <div class="ArticleTitle">
             <span>创建日期：</span>
-            <el-date-picker style="flex:1" v-model="CreateDate" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd" type="date" placeholder="创建日期"></el-date-picker>
+            <el-date-picker style="flex:1" v-model="CreateDate" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd"
+              type="date" placeholder="创建日期"></el-date-picker>
           </div>
-          
+
         </div>
 
         <div class="SimpleFlex">
@@ -30,7 +31,8 @@
           <div class="ArticleTitle">
             文章标签：
             <el-select v-model="ArticleTag" placeholder="选择文章标签" style="flex:1">
-              <el-option v-for="item in ArticleTagOptions" :key="item.value" :label="item.TagName" :value="item.TagName"></el-option>
+              <el-option v-for="item in ArticleTagOptions" :key="item._id" :label="item.TagName"
+                :value="item._id"></el-option>
             </el-select>
           </div>
         </div>
@@ -43,7 +45,7 @@
           <div class="ArticleTitle">
             文章封面：
             <input @change="SetArticleCover" type="file" multiple="multiple" ref='selectfile' style="flex:1">
-            <img :src="'/api/xiaolu/' + ArticleCover" v-show="ArticleCover" style="width: 70px;height: 40px"/>
+            <img :src="'/api/xiaolu/' + ArticleCover" v-show="ArticleCover" style="width: 70px;height: 40px" />
           </div>
           <div class="ArticleTitle" style="justify-content: end;">
             <el-button type="primary" @click="SubmitArticle()">提交</el-button>
@@ -51,7 +53,8 @@
         </div>
 
         <div class="ArticleDetail" id="ArticleDetail">
-          <mavon-editor v-model="Content" :isHljs = "true" @imgAdd="$imgAdd" ref=md :style="{height: editorHeight}"></mavon-editor>
+          <mavon-editor @change="change" v-model="Content" :isHljs="true" @imgAdd="$imgAdd" ref=md
+            :style="{ height: editorHeight }"></mavon-editor>
         </div>
       </div>
     </div>
@@ -59,9 +62,9 @@
 </template>
 
 <script>
+import axios from "axios";
 import Vue from "vue";
 import TopBar from "./TopBar";
-import axios from "axios";
 
 import mavonEditor from "mavon-editor";
 import "mavon-editor/dist/css/index.css";
@@ -72,7 +75,7 @@ Vue.use(mavonEditor);
 
 export default {
   name: "WriteArticle",
-  data: function() {
+  data: function () {
     return {
       Title: "",
       order: "", // 优先级，试验田类的文章需要本字段来排序
@@ -83,12 +86,17 @@ export default {
       ArticleTag: "",
       ArticleCover: "",
       CommentNum: 0,
-      editorHeight: 0
+      editorHeight: 0,
+      render: ''
     };
   },
   methods: {
+    change(value, render) {
+      console.log(render);
+      this.render = render
+    },
     // 监听提交按钮
-    SubmitArticle: function() {
+    SubmitArticle: function () {
       var That = this;
       // 修改文章
       if (this.$route.params.id) {
@@ -104,9 +112,10 @@ export default {
               CreateDate: this.CreateDate,
               ArticleTag: this.ArticleTag,
               ArticleCover: this.ArticleCover,
-              CommentNum: this.CommentNum
+              CommentNum: this.CommentNum,
+              render: this.render,
             },
-            Success: function(data) {
+            Success: function (data) {
               console.log(data);
               That.$router.push({ name: "Article" });
             }
@@ -127,9 +136,10 @@ export default {
               CreateDate: this.CreateDate,
               ArticleTag: this.ArticleTag,
               ArticleCover: this.ArticleCover,
-              CommentNum: this.CommentNum
+              CommentNum: this.CommentNum,
+              render: this.render,
             },
-            Success: function(data) {
+            Success: function (data) {
               That.$router.push({ name: "Article" });
             }
           });
@@ -139,43 +149,43 @@ export default {
       }
     },
     //上传文章缩略图
-    SetArticleCover: function() {
+    SetArticleCover: function () {
       var That = this;
       var PicData = new FormData();
       PicData.append("file", this.$refs.selectfile.files[0]);
       axios
         .post("/api/upload/album", PicData)
-        .then(function(response) {
+        .then(function (response) {
           console.log(response.data.data);
           That.ArticleCover = response.data.data; //头图图片预览
         })
-        .catch(function(error) {});
+        .catch(function (error) { });
     },
     $imgAdd(pos, $file) {
       var formdata = new FormData(),
         That = this;
       formdata.append("Content", $file);
 
-      axios.post("/api/UploadImg", formdata).then(function(UrlValue) {
+      axios.post("/api/UploadImg", formdata).then(function (UrlValue) {
         That.$refs.md.$img2Url(pos, UrlValue.data.data[0]);
       });
     }
   },
   /*初始化富文本插件*/
-  mounted: function() {
+  mounted: function () {
     this.bus.$emit("Topbar", {
       MenuHighLight: "1"
     });
   },
   /*初始化页面*/
-  created: function() {
+  created: function () {
     var That = this;
     //判断是否传参,是为修改文章、否为新增文章。初始化这个页面
 
     That.SQAjax({
       Url: "/api/types/typeList",
       RequestData: {},
-      Success: function(data) {
+      Success: function (data) {
         That.ArticleTagOptions = data.data;
       }
     });
@@ -184,7 +194,7 @@ export default {
       That.SQAjax({
         Url: "/api/blogs/detail",
         RequestData: { id: this.$route.params.id },
-        Success: function(data) {
+        Success: function (data) {
           console.log(data);
           That.Title = data.data.Title;
           That.order = data.data.order;
@@ -217,8 +227,8 @@ export default {
   justify-content: space-around;
 }
 
-.WriteArticleContent {
-}
+.WriteArticleContent {}
+
 .ArticleTitle {
   width: 30%;
   margin-right: 10px;
@@ -230,6 +240,7 @@ export default {
   width: 150px;
   flex: none;
 }
+
 .CommentNum input {
   width: 100%;
 }
@@ -255,13 +266,16 @@ export default {
   width: 100%;
   height: 15rem;
 }
+
 .WriteSubmit {
   text-align: right;
   margin-left: 10px;
 }
+
 .editortoolbar {
   border: 1px solid #ccc;
 }
+
 .editorbody {
   border: 1px solid #ccc;
   height: 500px;

@@ -22,12 +22,13 @@
         </el-dialog>
 
         <!--表格操作栏-->
-        <el-table :data="TagList" style="width: 100%" border :header-cell-style="{background:'#f7f7f7'}">
+        <el-table :data="TagList" style="width: 100%" border :header-cell-style="{ background: '#f7f7f7' }">
           <el-table-column prop="TagName" label="标题名称"></el-table-column>
           <el-table-column prop="TagNo" label="排序"></el-table-column>
           <el-table-column fixed="right" label="操作" width="130">
             <template slot-scope="scope">
-              <el-button @click="EditTag(scope.row._id,scope.row.TagName,scope.row.TagNo)" type="text" size="small" class="warning-color">编辑</el-button>
+              <el-button @click="EditTag(scope.row._id, scope.row.TagName, scope.row.TagNo)" type="text" size="small"
+                class="warning-color">编辑</el-button>
               <el-button @click="DeleteTag(scope.row._id)" type="text" size="small" class="danger-color">删除</el-button>
             </template>
           </el-table-column>
@@ -40,7 +41,7 @@
 <script>
 export default {
   name: "TagIndex",
-  data: function() {
+  data: function () {
     return {
       TagList: [],
       dialogFormVisible: false,
@@ -57,13 +58,13 @@ export default {
   },
   methods: {
     /*监听新增弹框*/
-    OnOpenDialog: function() {
+    OnOpenDialog: function () {
       this.form.TagName = "";
       this.form.TagNo = "";
       this.dialogFormVisible = true;
     },
     /*监听弹框提交*/
-    OnDialogSubmit: function() {
+    OnDialogSubmit: function () {
       var That = this;
       if (this.form.TagName && this.form.TagNo) {
         this.SQAjax({
@@ -73,7 +74,7 @@ export default {
             TagNo: this.form.TagNo,
             TagId: this.form.TagId ? this.form.TagId : ""
           },
-          Success: function(data) {
+          Success: function (data) {
             console.log(data);
             if (That.form.TagId) {
               delete That.form.TagId;
@@ -85,44 +86,63 @@ export default {
         this.dialogFormVisible = false;
       }
     },
-    OnDialogCancel: function() {
+    OnDialogCancel: function () {
       if (this.form.TagId) {
         delete this.form.TagId;
       }
       this.dialogFormVisible = false;
     },
     /*渲染标签列表*/
-    GetData: function(That) {
+    GetData: function (That) {
       That.SQAjax({
         Url: "/api/types/typeList",
-        Success: function(data) {
+        Success: function (data) {
           That.TagList = data.data;
         }
       });
     },
     /*删除标签*/
-    DeleteTag: function(Id) {
+    DeleteTag: function (Id) {
       var That = this;
+      this.$confirm('此操作将永久删除此分类, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
 
-      That.SQAjax({
-        Url: "/api/types/deleteType",
-        RequestData: {
-          _id: Id
-        },
-        Success: function(data) {
-          That.GetData(That);
-        }
+        That.SQAjax({
+          Url: "/api/types/deleteType",
+          RequestData: {
+            _id: Id
+          },
+          Success: function (data) {
+            That.GetData(That);
+            setTimeout(() => {
+              That.$message({
+                type: 'success',
+                message: '删除成功!'
+              });
+            }, 0);
+          }
+        });
+
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
       });
+
     },
     /*编辑标签*/
-    EditTag: function(Id, CurrentTagName, CurrentTagNo) {
+    EditTag: function (Id, CurrentTagName, CurrentTagNo) {
       this.form.TagName = CurrentTagName;
       this.form.TagNo = CurrentTagNo;
       this.form.TagId = Id;
       this.dialogFormVisible = true;
     }
   },
-  mounted: function() {
+  mounted: function () {
     this.GetData(this);
     this.bus.$emit("Topbar", {
       MenuHighLight: "2"
@@ -131,5 +151,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

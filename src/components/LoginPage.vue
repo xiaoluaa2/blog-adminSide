@@ -1,8 +1,9 @@
 <template>
   <div class="LoginContent">
     <el-form ref="form" :model="form" label-width="60px">
-      <div style="text-align: center"><h2>sunq's blog 管理后台</h2></div>
-      <div style="text-align: center;color:#409EFF"><h4>（后台对外开发，请直接登录）</h4></div>
+      <div style="text-align: center">
+        <h2>管理后台</h2>
+      </div>
       <el-form-item label="账号">
         <el-input v-model="form.CnName"></el-input>
       </el-form-item>
@@ -26,13 +27,13 @@ export default {
   data: () => {
     return {
       form: {
-        CnName: "xiaolu",
-        PassWord: "123456"
+        CnName: "",
+        PassWord: ""
       }
     };
   },
   methods: {
-    OnLogin: function() {
+    OnLogin: function () {
       var That = this;
       var AjaxLoading = Loading.service({ fullscreen: true });
       axios
@@ -41,7 +42,7 @@ export default {
           password: this.form.PassWord
           // UserType: "Admin"
         })
-        .then(function(response) {
+        .then(function (response) {
           AjaxLoading.close();
           console.log(response);
           if (response.data.status == 0) {
@@ -79,10 +80,10 @@ export default {
             });
           }
         })
-        .catch(function(error) {});
+        .catch(function (error) { });
     },
 
-    OnRegist: function() {
+    OnRegist: function () {
       var That = this;
       axios
         .post("/api/UserCreate", {
@@ -90,7 +91,7 @@ export default {
           PassWord: this.form.PassWord,
           UserType: "Admin"
         })
-        .then(function(response) {
+        .then(function (response) {
           if (response.data.status == "200") {
             That.$message({
               message: "注册成功",
@@ -98,10 +99,10 @@ export default {
             });
           }
         })
-        .catch(function(error) {});
+        .catch(function (error) { });
     },
     // 监听enter键
-    enterKey: function() {
+    enterKey: function () {
       let that = this;
       const code = event.keyCode
         ? event.keyCode
@@ -113,11 +114,11 @@ export default {
     }
   },
   // 生命周期不能使用箭头函数
-  mounted: function() {
+  mounted: function () {
     document.addEventListener("keyup", this.enterKey);
   },
   // 本组件销毁时注意移除监听，否则其他页面点击enter也会登陆
-  destroyed: function() {
+  destroyed: function () {
     document.removeEventListener("keyup", this.enterKey);
   }
 };
@@ -126,14 +127,14 @@ export default {
 <style scoped lang="less">
 @import "../assets/css/base.less";
 
-@media only screen and (max-device-width: 768px) {
+@media screen and (max-width: 768px) {
   .LoginContent {
     padding: 0 20px;
     margin: 12rem auto 0;
   }
 }
 
-@media only screen and (min-device-width: 768px) {
+@media screen and (min-width: 768px) {
   .LoginContent {
     width: 600px;
     margin: 12rem auto 0;
